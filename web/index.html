@@ -250,7 +250,7 @@
       statusAlert.innerText = "⏳ Sedang meneruskan tiket ke sistem...";
 
       try {
-        const res = await fetch("https://s2j4vegcc4.execute-api.ap-southeast-1.amazonaws.com/ticket", {
+        const res = await fetch("API_URL_PLACEHOLDER/ticket", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

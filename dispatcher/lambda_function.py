@@ -1,8 +1,9 @@
 import json
 import urllib.request
+import os
 
-BOT_TOKEN = "8193259854:AAEv1K8H55A2ulvsfG_Ywqmje1jN6-l6ZYg"
-GROUP_CHAT_ID = "-1003741912580"
+BOT_TOKEN = os.environ['TELEGRAM_TOKEN']
+GROUP_CHAT_ID = os.environ['CHAT_ID']
 
 def send(msg):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"

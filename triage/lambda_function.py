@@ -2,11 +2,16 @@ import json
 import boto3
 from datetime import datetime
 import uuid
+import os
+
+TABLE_NAME = os.environ['TABLE_NAME']
+QUEUE_URL = os.environ['QUEUE_URL']
+
+
 
 # AWS setup
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-1')
-table = dynamodb.Table('TicketsTable')
-
+table = dynamodb.Table(TABLE_NAME)
 sqs = boto3.client('sqs', region_name='ap-southeast-1')
 
 QUEUE_URL = "https://sqs.ap-southeast-1.amazonaws.com/250368537810/TicketQueue"
