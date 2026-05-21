@@ -20,8 +20,8 @@ Resources:
 
       Environment:
         Variables:
-          TELEGRAM_TOKEN: "ISI_TOKEN"
-          CHAT_ID: "ISI_CHAT_ID"
+          TELEGRAM_TOKEN: "8193259854:AAEv1K8H55A2ulvsfG_Ywqmje1jN6-l6ZYg"
+          CHAT_ID: "-1003741912580"
 
       Policies:
         - SQSPollerPolicy:
