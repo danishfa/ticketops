@@ -48,6 +48,13 @@ Resources:
           Properties:
             Path: /ticket
             Method: POST
+            CorsConfiguration:
+              AllowOrigins:
+                - "*"
+              AllowMethods:
+                - POST
+              AllowHeaders:
+                - "*"
 
 Outputs:
   ApiEndpoint:
