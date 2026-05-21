@@ -48,7 +48,7 @@ Resources:
           Properties:
             Path: /ticket
             Method: POST
-            CorsConfiguration:
+            Cors:
               AllowOrigins:
                 - "*"
               AllowMethods:
