@@ -13,6 +13,7 @@ cd triage
 sam build
 
 sam deploy \
+  --template-file template.yaml \
   --stack-name ticketops-prod-triage \
   --region $REGION \
   --capabilities CAPABILITY_IAM \
