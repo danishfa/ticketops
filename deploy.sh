@@ -1,15 +1,13 @@
 #!/bin/bash
 set -e
 
-3 website s3://$BUCKET \REGION="ap-southeast-1"
-  --index-document index.html
+REGION="ap-southeast-1"
 
-echo "======================================"
-echo "✅ PROD DEPLOY COMPLETE"
-echo "🌐 Web: http://$BUCKET.s3-website-$REGION.amazonaws.com"
-echo "======================================"
+echo "=============================="
+echo "🚀 START DEPLOY (PROD)"
+echo "=============================="
 
-echo "=== DEPLOY TRIAGE (PROD) ==="
+echo "=== STEP 1: DEPLOY TRIAGE ==="
 cd triage
 
 sam build
@@ -21,7 +19,7 @@ sam deploy \
   --resolve-s3 \
   --confirm-changeset
 
-echo "=== GET OUTPUT ==="
+echo "=== GET OUTPUT TRIAGE ==="
 
 QUEUE_ARN=$(aws cloudformation describe-stacks \
   --stack-name ticketops-prod-triage \
@@ -35,7 +33,10 @@ API_URL=$(aws cloudformation describe-stacks \
 
 cd ..
 
-echo "=== DEPLOY DISPATCHER (PROD) ==="
+echo "Queue ARN: $QUEUE_ARN"
+echo "API URL: $API_URL"
+
+echo "=== STEP 2: DEPLOY DISPATCHER ==="
 cd dispatcher
 
 sam build
@@ -50,13 +51,22 @@ sam deploy \
 
 cd ..
 
-echo "=== DEPLOY WEB (PROD) ==="
+echo "=== STEP 3: DEPLOY WEB ==="
 
 BUCKET="ticketops-prod-web-$RANDOM"
 
 aws s3 mb s3://$BUCKET --region $REGION
 
+# Inject API URL ke HTML
 sed "s|API_URL_PLACEHOLDER|$API_URL|g" web/index.html > web/index_deployed.html
 
 aws s3 cp web/index_deployed.html s3://$BUCKET/index.html
 
+aws s3 website s3://$BUCKET \
+  --index-document index.html
+
+echo "=============================="
+echo "✅ DEPLOY COMPLETE"
+echo "🌐 Web URL:"
+echo "http://$BUCKET.s3-website-$REGION.amazonaws.com"
+echo "=============================="
