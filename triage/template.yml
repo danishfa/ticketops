@@ -4,6 +4,19 @@ Description: Triage Service (PROD)
 
 Resources:
 
+  # ✅ API GLOBAL
+  MyApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - "*"
+
   TicketsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -46,18 +59,12 @@ Resources:
         ApiTrigger:
           Type: HttpApi
           Properties:
+            ApiId: !Ref MyApi
             Path: /ticket
             Method: POST
-            Cors:
-              AllowOrigins:
-                - "*"
-              AllowMethods:
-                - POST
-              AllowHeaders:
-                - "*"
 
 Outputs:
   ApiEndpoint:
-    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com"
   QueueArn:
     Value: !GetAtt TicketQueue.Arn
