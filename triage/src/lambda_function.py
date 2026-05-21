@@ -14,9 +14,6 @@ dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-1')
 table = dynamodb.Table(TABLE_NAME)
 sqs = boto3.client('sqs', region_name='ap-southeast-1')
 
-QUEUE_URL = "https://sqs.ap-southeast-1.amazonaws.com/250368537810/TicketQueue"
-
-# ✅ KEYWORDS (multi-language)
 # ✅ KEYWORDS (multi-language & expanded)
 KEYWORDS = {
     "CRITICAL": [
@@ -141,8 +138,11 @@ def lambda_handler(event, context):
         QueueUrl=QUEUE_URL,
         MessageBody=json.dumps(item)
     )
-
+    
     return {
-        "statusCode": 200,
-        "body": json.dumps({"status": "ok"})
+    "statusCode": 200,
+    "headers": {
+        "Access-Control-Allow-Origin": "*"
+    },
+    "body": json.dumps({"status": "ok"})
     }
