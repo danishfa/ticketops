@@ -20,7 +20,8 @@ sam deploy \
   --region $REGION \
   --capabilities CAPABILITY_IAM \
   --resolve-s3 \
-  --no-confirm-changeset
+  --no-confirm-changeset \
+  --on-failure DELETE
 
 echo "=== GET OUTPUT TRIAGE ==="
 
@@ -53,7 +54,8 @@ sam deploy \
   --capabilities CAPABILITY_IAM \
   --parameter-overrides QueueArn=$QUEUE_ARN \
   --resolve-s3 \
-  --no-confirm-changeset
+  --no-confirm-changeset \
+  --on-failure DELETE
 
 cd ..
 
