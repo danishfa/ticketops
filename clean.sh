@@ -1,10 +1,43 @@
-#!/bin/bash#!/bin/bash --output text)
+#!/bin/bash
+set -e
+
+REGION="ap-southeast-1"
+
+echo "=============================="
+echo "💣 CLEANING ALL TICKETOPS STACK"
+echo "=============================="
+
+# =========================
+# DELETE STACKS
+# =========================
+echo "=== DELETE STACK TRIAGE ==="
+aws cloudformation delete-stack \
+  --stack-name ticketops-prod-triage \
+  --region $REGION || true
+
+echo "=== DELETE STACK DISPATCHER ==="
+aws cloudformation delete-stack \
+  --stack-name ticketops-prod-dispatcher \
+  --region $REGION || true
+
+# =========================
+# WAIT DELETE COMPLETE
+# =========================
+echo "=== WAIT FOR STACK DELETE ==="
+
+while true; do
+  # Menggunakan stack-status-filter agar lebih akurat mengecek yang masih in_progress
+  STACKS=$(aws cloudformation list-stacks \
+    --region $REGION \
+    --stack-status-filter DELETE_IN_PROGRESS \
+    --query "StackSummaries[?StackName=='ticketops-prod-triage' || StackName=='ticketops-prod-dispatcher'].StackName" \
+    --output text)
 
   if [ -z "$STACKS" ]; then
     break
   fi
 
-  echo "⏳ Waiting stacks to be deleted..."
+  echo "⏳ Waiting for stacks to be deleted: $STACKS..."
   sleep 5
 done
 
@@ -74,33 +107,3 @@ rm -rf .aws-sam
 echo "=============================="
 echo "✅ CLEAN COMPLETE (FULL RESET)"
 echo "=============================="
-set -e
-
-REGION="ap-southeast-1"
-
-echo "=============================="
-echo "💣 CLEANING ALL TICKETOPS STACK"
-echo "=============================="
-
-# =========================
-# DELETE STACKS
-# =========================
-echo "=== DELETE STACK TRIAGE ==="
-aws cloudformation delete-stack \
-  --stack-name ticketops-prod-triage \
-  --region $REGION || true
-
-echo "=== DELETE STACK DISPATCHER ==="
-aws cloudformation delete-stack \
-  --stack-name ticketops-prod-dispatcher \
-  --region $REGION || true
-
-# =========================
-# WAIT DELETE COMPLETE
-# =========================
-echo "=== WAIT FOR STACK DELETE ==="
-
-while true; do
-  STACKS=$(aws cloudformation list-stacks \
-    --region $REGION \
-    --query "StackSummaries[?StackName=='ticketops-prod-triage' || StackName=='ticketops-prod-dispatcher'][?StackStatus!='DELETE_COMPLETE']" \
