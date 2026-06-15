@@ -20,8 +20,8 @@ Resources:
 
       Environment:
         Variables:
-          TELEGRAM_TOKEN: "8270938077:AAFWriotCwLm2m2k-X4mfhjC0nt_ABiC7gM"
-          CHAT_ID: "-1003741912580"
+          TELEGRAM_TOKEN: !Ref TelegramToken
+          CHAT_ID: !Ref ChatId
 
       Policies:
         - SQSPollerPolicy:
