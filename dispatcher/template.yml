@@ -5,6 +5,10 @@ Description: Dispatcher Service (PROD)
 Parameters:
   QueueArn:
     Type: String
+  TelegramToken:
+    Type: String
+  ChatId:
+    Type: String
 
 Resources:
 
