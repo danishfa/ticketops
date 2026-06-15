@@ -86,32 +86,35 @@ BUCKET="ticketops-prod-web-$RANDOM"
 
 aws s3 mb s3://$BUCKET --region $REGION
 
-# MATIKAN BLOCK PUBLIC ACCESS
+# ✅ MATIKAN BLOCK PUBLIC ACCESS
 aws s3api put-public-access-block \
   --bucket $BUCKET \
   --public-access-block-configuration \
   BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
 
-# SET POLICY PUBLIC
-aws s3api put-bucket-policy \
-  --bucket $BUCKET \
-  --policy "{
-    \"Version\":\"2012-10-17\",
-    \"Statement\":[{
-      \"Effect\":\"Allow\",
-      \"Principal\":\"*\",
-      \"Action\":\"s3:GetObject\",
-      \"Resource\":\"arn:aws:s3:::\$BUCKET/*\"
-    }]
-  }"
+# ✅ Menggunakan Here-Doc agar JSON Policy terbaca sempurna oleh AWS
+aws s3api put-bucket-policy --bucket $BUCKET --policy "$(cat <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::$BUCKET/*"
+    }
+  ]
+}
+EOF
+)"
 
-# INJECT API URL KE HTML
+# ✅ INJECT API URL KE HTML
 sed "s|API_URL_PLACEHOLDER|$API_URL|g" web/index.html > web/index_deployed.html
 
-# UPLOAD KE S3
+# ✅ UPLOAD KE S3
 aws s3 cp web/index_deployed.html s3://$BUCKET/index.html
 
-# CONFIG S3 AS WEBSITE
+# ✅ CONFIG S3 AS WEBSITE
 aws s3 website s3://$BUCKET/ --index-document index.html --region $REGION
 
 WEB_URL="http://$BUCKET.s3-website-$REGION.amazonaws.com"
